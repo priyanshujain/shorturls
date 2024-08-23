@@ -5,3 +5,9 @@
 .env
 
 shorturls
+
+playground
+playground/*
+
+data
+data/*

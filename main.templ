@@ -23,13 +23,38 @@ templ layout() {
     </html>
 }
 
+script defaultValue() {
+    let url = new URL(window.location.href);
+    return url.searchParams.get("long_url");
+}
+
 templ Index() {
     @layout() {
-        <h3>Shorten a long URL</h3>
-        <form hx-post="/create" hx-swap="outerHTML">
+        <script>
+            function setSourceLink() {
+                document.getElementById("source").value = "link";
+            };
+            function setSourceQR() {
+                document.getElementById("source").value = "qr";
+            };
+            function calculateSource() {
+                let source = document.getElementById("source").value;
+                return source;
+            };
+            window.onload = function() {
+                const params = new URLSearchParams(window.location.search);
+                const param = params.get('long_url');
+                if (param) {
+                    document.getElementById('long_url').value = param;
+                }
+            };
+        </script>
+        <span id="source" />
+        <form hx-post="/create" hx-swap="outerHTML" hx-params="*" hx-vals='js:{"source": calculateSource()}'>
             <div>
-                <input name="long_url" placeholder="Long URL" required></input>
-                <button type="submit">Create</button>
+                <input id="long_url" name="long_url" placeholder="Long URL" required></input>
+                <button onclick="setSourceLink()" type="submit">Create Link</button>
+                <button class="outline" onclick="setSourceQR()" type="submit">Create QR</button>
             </div>
         </form>
     }
@@ -45,12 +70,26 @@ script copyToClipboard(url string) {
     }, 1000);
 }
 
-templ Response(url string) {
+templ LinkResponse(url string) {
     @layout() {
         <div>
             <a href={ templ.URL(url) } target="_blank">
             <p>{ url }</p></a>
             <button id="copy-btn" onclick={ copyToClipboard(url) } >Copy</button>
+        </div>
+    }
+}
+
+templ QRRResponse(url, content string) {
+    @layout() {
+        <div>
+            <figure>
+                <img src={ url } alt="QR Code">
+                <figcaption>
+                Click to edit
+                <a href={ templ.URL( "/?long_url=" + content ) }> { content }</a>
+                </figcaption>
+            </figure>
         </div>
     }
 }
