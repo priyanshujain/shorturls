@@ -1,6 +1,6 @@
-# ShortURL
+# ShortURLs
 
-Creates a short URL from a long URL.
+Creates a short URL or QR from a long URL.
 
 ## Installation
 
@@ -22,4 +22,14 @@ CREATE TABLE short_links (
     user_agent TEXT NOT NULL
 );
 ```
-5. Run `go run main.go`
+5. Create QR codes table in the database
+```sql
+CREATE TABLE qr_codes (
+    qr_id TEXT PRIMARY KEY,
+    long_url TEXT NOT NULL,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip TEXT NOT NULL,
+    user_agent TEXT NOT NULL
+);
+```
+6. Run `go run .`
