@@ -1,0 +1,63 @@
+package main
+
+templ layout() {
+	<html lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="color-scheme" content="light dark" />
+            <title>Short Any URL simply</title>
+            <meta name="description" content="Simplest URL shortner" />
+
+            <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.3/css/pico.min.css"
+            />
+            <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+            <script type="text/javascript">
+                function copyToClipboard(text) {
+                    navigator.clipboard.writeText(text);
+                }
+            </script>
+        </head>
+
+        <body>
+            <main class="container">
+                { children... }
+            </main>
+        </body>
+    </html>
+}
+
+templ Index() {
+    @layout() {
+        <h3>Shorten a long URL</h3>
+        <form hx-post="/create">
+            <div>
+                <input name="long_url" placeholder="Long URL" required></input>
+                <button type="submit">Create</button>
+            </div>
+        </form>
+    }
+}
+
+
+script copyToClipboard(text string) {
+     navigator.clipboard.writeText(text);
+     alert("Copied to clipboard");
+}
+
+templ Response(url string) {
+    @layout() {
+        <div>
+            <a href={ templ.URL(url) } target="_blank">
+            <p>{ url }</p></a>
+            <button onclick={ copyToClipboard(url) } >Copy</button>
+        </div>
+    }
+}
+
+templ Error(message string) {
+        <h1>An Error Occurred</h1>
+        <p>{ message }</p>
+}

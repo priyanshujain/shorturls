@@ -3,12 +3,13 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	log "log/slog"
 	"math/rand"
 	"net/http"
 	"os"
 	"time"
+
+	_ "github.com/lib/pq"
 )
 
 func connectDB() (*sql.DB, error) {
@@ -85,7 +86,8 @@ func createLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(shortLink))
+	url := fmt.Sprintf("http://%s/%s", r.Host, shortLink)
+	Response(url).Render(r.Context(), w)
 }
 
 func redirectHandler(w http.ResponseWriter, r *http.Request) {
@@ -119,7 +121,13 @@ func main() {
 	defer db.Close()
 
 	http.HandleFunc("/create", createLinkHandler)
-	http.HandleFunc("/", redirectHandler)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" {
+			Index().Render(r.Context(), w)
+		} else {
+			redirectHandler(w, r)
+		}
+	})
 
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
