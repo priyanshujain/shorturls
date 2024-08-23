@@ -26,7 +26,7 @@ func layout() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta name=\"color-scheme\" content=\"light dark\"><title>Short Any URL simply</title><meta name=\"description\" content=\"Simplest URL shortner\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.3/css/pico.min.css\"><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script type=\"text/javascript\">\n                function copyToClipboard(text) {\n                    navigator.clipboard.writeText(text);\n                }\n            </script></head><body><main class=\"container\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta name=\"color-scheme\" content=\"light dark\"><title>Short Any URL simply</title><meta name=\"description\" content=\"Simplest URL shortner\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.3/css/pico.min.css\"><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script></head><body><main class=\"container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -72,7 +72,7 @@ func Index() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h3>Shorten a long URL</h3><form hx-post=\"/create\"><div><input name=\"long_url\" placeholder=\"Long URL\" required> <button type=\"submit\">Create</button></div></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h3>Shorten a long URL</h3><form hx-post=\"/create\" hx-swap=\"outerHTML\"><div><input name=\"long_url\" placeholder=\"Long URL\" required> <button type=\"submit\">Create</button></div></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -86,14 +86,18 @@ func Index() templ.Component {
 	})
 }
 
-func copyToClipboard(text string) templ.ComponentScript {
+func copyToClipboard(url string) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_copyToClipboard_b963`,
-		Function: `function __templ_copyToClipboard_b963(text){navigator.clipboard.writeText(text);
-     alert("Copied to clipboard");
+		Name: `__templ_copyToClipboard_cb70`,
+		Function: `function __templ_copyToClipboard_cb70(url){navigator.clipboard.writeText(url);
+    let ele = document.getElementById("copy-btn");
+    ele.innerHTML = "Copied!"
+    window.setTimeout(() => {
+        ele.innerHTML = "Copy"
+    }, 1000);
 }`,
-		Call:       templ.SafeScript(`__templ_copyToClipboard_b963`, text),
-		CallInline: templ.SafeScriptInline(`__templ_copyToClipboard_b963`, text),
+		Call:       templ.SafeScript(`__templ_copyToClipboard_cb70`, url),
+		CallInline: templ.SafeScriptInline(`__templ_copyToClipboard_cb70`, url),
 	}
 }
 
@@ -143,7 +147,7 @@ func Response(url string) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 54, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 52, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -157,7 +161,7 @@ func Response(url string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button onclick=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button id=\"copy-btn\" onclick=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -205,7 +209,7 @@ func Error(message string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(message)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 62, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 60, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {

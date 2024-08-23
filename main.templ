@@ -14,13 +14,7 @@ templ layout() {
             href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.3/css/pico.min.css"
             />
             <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
-            <script type="text/javascript">
-                function copyToClipboard(text) {
-                    navigator.clipboard.writeText(text);
-                }
-            </script>
         </head>
-
         <body>
             <main class="container">
                 { children... }
@@ -32,7 +26,7 @@ templ layout() {
 templ Index() {
     @layout() {
         <h3>Shorten a long URL</h3>
-        <form hx-post="/create">
+        <form hx-post="/create" hx-swap="outerHTML">
             <div>
                 <input name="long_url" placeholder="Long URL" required></input>
                 <button type="submit">Create</button>
@@ -42,9 +36,13 @@ templ Index() {
 }
 
 
-script copyToClipboard(text string) {
-     navigator.clipboard.writeText(text);
-     alert("Copied to clipboard");
+script copyToClipboard(url string) {
+    navigator.clipboard.writeText(url);
+    let ele = document.getElementById("copy-btn");
+    ele.innerHTML = "Copied!"
+    window.setTimeout(() => {
+        ele.innerHTML = "Copy"
+    }, 1000);
 }
 
 templ Response(url string) {
@@ -52,7 +50,7 @@ templ Response(url string) {
         <div>
             <a href={ templ.URL(url) } target="_blank">
             <p>{ url }</p></a>
-            <button onclick={ copyToClipboard(url) } >Copy</button>
+            <button id="copy-btn" onclick={ copyToClipboard(url) } >Copy</button>
         </div>
     }
 }
