@@ -121,12 +121,12 @@ func (a *app) QRCode(ctx context.Context, query qrCodeQuery) (qrCode, error) {
 	var qr qrCode
 	err := a.db.QueryRow("SELECT qr_id, long_url, create_time FROM qr_codes WHERE qr_id = $1", query.QRID).Scan(&qr.ID, &qr.LongURL, &qr.CreateTime)
 	if err != nil {
-		return qrCode{}, err
+		return qrCode{}, fmt.Errorf("QR code not found: %w", err)
 	}
 
 	content, err := os.ReadFile(fmt.Sprintf("%s/%s.png", a.dataDirectory, query.QRID))
 	if err != nil {
-		return qrCode{}, err
+		return qrCode{}, fmt.Errorf("failed to read QR code image: %w", err)
 	}
 
 	qr.Content = content
@@ -217,7 +217,8 @@ func (h *httpHandler) qrCode(w http.ResponseWriter, r *http.Request) {
 	qrID := strings.TrimSuffix(fileName, ".png")
 	qr, err := h.app.QRCode(r.Context(), qrCodeQuery{QRID: qrID})
 	if err != nil {
-		http.Error(w, "QR code not found", http.StatusNotFound)
+		log.Error("unsable to get wt image", "error", err)
+		http.Error(w, "QR image not found", http.StatusNotFound)
 		return
 	}
 

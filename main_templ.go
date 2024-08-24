@@ -83,7 +83,7 @@ func Index() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n            function setSourceLink() {\n                document.getElementById(\"source\").value = \"link\";\n            };\n            function setSourceQR() {\n                document.getElementById(\"source\").value = \"qr\";\n            };\n            function calculateSource() {\n                let source = document.getElementById(\"source\").value;\n                return source;\n            };\n            window.onload = function() {\n                const params = new URLSearchParams(window.location.search);\n                const param = params.get('long_url');\n                if (param) {\n                    document.getElementById('long_url').value = param;\n                }\n            };\n        </script> <span id=\"source\"></span><form hx-post=\"/create\" hx-swap=\"outerHTML\" hx-params=\"*\" hx-vals=\"js:{&#34;source&#34;: calculateSource()}\"><div><input id=\"long_url\" name=\"long_url\" placeholder=\"Long URL\" required> <button onclick=\"setSourceLink()\" type=\"submit\">Create Link</button> <button class=\"outline\" onclick=\"setSourceQR()\" type=\"submit\">Create QR</button></div></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n            function setSourceLink() {\n                document.getElementById(\"source\").value = \"link\";\n            };\n            function setSourceQR() {\n                document.getElementById(\"source\").value = \"qr\";\n            };\n            function calculateSource() {\n                let source = document.getElementById(\"source\").value;\n                return source;\n            };\n            window.onload = function() {\n                const params = new URLSearchParams(window.location.search);\n                const param = params.get('long_url');\n                if (param) {\n                    document.getElementById('long_url').value = param;\n                }\n            };\n        </script> <span id=\"source\"></span><form hx-post=\"/create\" hx-swap=\"outerHTML\" hx-params=\"*\" hx-vals=\"js:{&#34;source&#34;: calculateSource()}\"><div><input id=\"long_url\" name=\"long_url\" placeholder=\"Long URL\" required> <button onclick=\"setSourceLink()\" type=\"submit\">Create Link</button> <button class=\"outline\" onclick=\"setSourceQR()\" type=\"submit\">Create QR</button></div></form><div><script src=\"https://unpkg.com/html5-qrcode\"></script><div><p style=\"text-align: center; padding: 20px\">or </p><button id=\"scanButton\" data-target=\"qr-scan-modal\" onclick=\"toggleModal()\" type=\"submit\" class=\"outline\">Scan QR</button> <dialog id=\"qr-scan-modal\" style=\"width: 100vw; height: 100vh\" hidden><article style=\"\n                        margin: 0;\n                        max-width: 100%;\n                        height: 100%;\n                        max-height: 100%;\n                    \"><header><button aria-label=\"Close\" rel=\"prev\" data-target=\"qr-scan-modal\" onclick=\"toggleModal()\"></button><p><strong>Scan any type of QR/Barcode</strong></p></header><div id=\"reader\"></div><div id=\"reader-result\" style=\"text-align: center\"></div></article></dialog></div><script>\n            let html5QrcodeScanner = new Html5QrcodeScanner(\n                \"reader\",\n                { fps: 10, qrbox: { width: 250, height: 250 } },\n                /* verbose= */ false,\n            );\n\n            function toggleModal() {\n                html5QrcodeScanner.clear();\n                document.getElementById(\"reader-result\").innerHTML = \"\";\n                const modal = document.getElementById(\"qr-scan-modal\");\n                modal.hidden = !modal.hidden;\n                modal.open = !modal.open;\n            }\n\n            function rescan() {\n                document.getElementById(\"reader-result\").innerHTML = \"\";\n                html5QrcodeScanner.clear();\n                html5QrcodeScanner.render(onScanSuccess, onScanFailure);\n            }\n\n            function onScanSuccess(decodedText, decodedResult) {\n                document.getElementById(\"reader-result\").innerHTML =\n                    `<b>Scanned Result</b><br /> <br /> <p style=\"\n                    padding: 20px;\n                    max-width: 400px;\n                    margin: auto;\n                    border: 2px solid var(--pico-primary-background);\n                    border-radius: 5px;\">${decodedText}</p> <br/> <br/>` +\n                    `<button onclick=\"rescan()\">Rescan</button>`;\n                html5QrcodeScanner.clear();\n                // stop camera after successful scan using camera api\n                stream.getTracks().forEach((track) => track.stop());\n                console.log(`Code matched = ${decodedText}`, decodedResult);\n            }\n\n            function onScanFailure(error) {\n                console.warn(`Code scan error = ${error}`);\n            }\n\n            // add the following code on click of the button\n            document\n                .getElementById(\"scanButton\")\n                .addEventListener(\"click\", () => {\n                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);\n                });\n        </script></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -158,7 +158,7 @@ func LinkResponse(url string) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 77, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 167, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -232,13 +232,13 @@ func QRRResponse(url, content string) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 87, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 177, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" alt=\"QR Code\"><figcaption>Click to edit the URL <a href=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" alt=\"QR Code\"><figcaption>Click to edit <a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -254,7 +254,7 @@ func QRRResponse(url, content string) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 90, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 180, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -299,7 +299,7 @@ func Error(message string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(message)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 99, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `main.templ`, Line: 189, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
