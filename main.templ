@@ -2,188 +2,49 @@ package main
 
 templ layout() {
 	<html lang="en">
-        <head>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <meta name="color-scheme" content="light dark" />
-            <title>Short Any URL simply</title>
-            <meta name="description" content="Simplest URL shortner" />
-
-            <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css"
-            />
-            <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
-        </head>
-        <body>
-            <main class="container">
-                { children... }
-            </main>
-        </body>
-    </html>
-}
-
-script defaultValue() {
-    let url = new URL(window.location.href);
-    return url.searchParams.get("long_url");
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta name="color-scheme" content="light dark"/>
+			<title>Short Any URL simply</title>
+			<meta name="description" content="Simplest URL shortner"/>
+			<link
+				rel="stylesheet"
+				href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css"
+			/>
+			<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+		</head>
+		<body>
+			<main class="container">
+				{ children... }
+			</main>
+		</body>
+	</html>
 }
 
 templ Index() {
-    @layout() {
-        <script>
-            function setSourceLink() {
-                document.getElementById("source").value = "link";
-            };
-            function setSourceQR() {
-                document.getElementById("source").value = "qr";
-            };
-            function calculateSource() {
-                let source = document.getElementById("source").value;
-                return source;
-            };
-            window.onload = function() {
-                const params = new URLSearchParams(window.location.search);
-                const param = params.get('long_url');
-                if (param) {
-                    document.getElementById('long_url').value = param;
-                }
-            };
-        </script>
-        <span id="source" />
-        <form hx-post="/create" hx-swap="outerHTML" hx-params="*" hx-vals='js:{"source": calculateSource()}'>
-            <div>
-                <input id="long_url" name="long_url" placeholder="Long URL" required></input>
-                <button onclick="setSourceLink()" type="submit">Create Link</button>
-                <button class="outline" onclick="setSourceQR()" type="submit">Create QR</button>
-            </div>
-        </form>
-        <div>
-        <script src="https://unpkg.com/html5-qrcode"></script>
-        <div>
-        <p style="text-align: center; padding: 20px"> or </p>
-            <button
-                id="scanButton"
-                data-target="qr-scan-modal"
-                onclick="toggleModal()"
-                type="submit"
-                class="outline"
-            >
-                Scan QR
-            </button>
-            <dialog
-                id="qr-scan-modal"
-                hidden
-            >
-                <article
-                    style="
-                        margin: 0;
-                        max-width: 100%;
-                        height: 100%;
-                        max-height: 100%;
-                    "
-                >
-                    <header>
-                        <button
-                            aria-label="Close"
-                            rel="prev"
-                            data-target="qr-scan-modal"
-                            onclick="toggleModal()"
-                        ></button>
-                        <p>
-                            <strong>Scan any type of QR/Barcode</strong>
-                        </p>
-                    </header>
-                    <div id="reader"></div>
-                    <div id="reader-result" style="text-align: center"></div>
-                </article>
-            </dialog>
-        </div>
-        <script>
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader",
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                /* verbose= */ false,
-            );
-
-            function toggleModal() {
-                html5QrcodeScanner.clear();
-                document.getElementById("reader-result").innerHTML = "";
-                const modal = document.getElementById("qr-scan-modal");
-                modal.hidden = !modal.hidden;
-                modal.open = !modal.open;
-            }
-
-            function rescan() {
-                document.getElementById("reader-result").innerHTML = "";
-                html5QrcodeScanner.clear();
-                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-            }
-
-            function onScanSuccess(decodedText, decodedResult) {
-                document.getElementById("reader-result").innerHTML =
-                    `<b>Scanned Result</b><br /> <br /> <p style="
-                    padding: 20px;
-                    max-width: 400px;
-                    margin: auto;
-                    border: 2px solid var(--pico-primary-background);
-                    border-radius: 5px;">${decodedText}</p> <br/> <br/>` +
-                    `<button onclick="rescan()">Rescan</button>`;
-                html5QrcodeScanner.clear();
-                // stop camera after successful scan using camera api
-                stream.getTracks().forEach((track) => track.stop());
-                console.log(`Code matched = ${decodedText}`, decodedResult);
-            }
-
-            function onScanFailure(error) {
-                console.warn(`Code scan error = ${error}`);
-            }
-
-            // add the following code on click of the button
-            document
-                .getElementById("scanButton")
-                .addEventListener("click", () => {
-                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-                });
-        </script>
-        </div>
-    }
-}
-
-
-script copyToClipboard(url string) {
-    navigator.clipboard.writeText(url);
-    let ele = document.getElementById("copy-btn");
-    ele.innerHTML = "Copied!"
-    window.setTimeout(() => {
-        ele.innerHTML = "Copy"
-    }, 1000);
-}
-
-templ LinkResponse(url string) {
-    @layout() {
-        <div>
-            <a href={ templ.URL(url) } target="_blank">
-            <p>{ url }</p></a>
-            <button id="copy-btn" onclick={ copyToClipboard(url) } >Copy</button>
-        </div>
-    }
+	@layout() {
+		<span id="source"></span>
+		<form hx-post="/create" hx-swap="outerHTML" hx-params="*">
+			<div>
+				<input id="long_url" name="long_url" placeholder="Long URL" required/>
+				<button class="outline" type="submit">Create QR</button>
+			</div>
+		</form>
+	}
 }
 
 templ QRRResponse(url, content string) {
-    @layout() {
-        <div>
-            <figure>
-                <img src={ url } alt="QR Code">
-                <figcaption>
-                Click to edit
-                <a href={ templ.URL( "/?long_url=" + content ) }> { content }</a>
-                </figcaption>
-            </figure>
-        </div>
-    }
+	@layout() {
+		<div>
+			<figure>
+				<img src={ url } alt="QR Code"/>
+			</figure>
+		</div>
+	}
 }
 
 templ Error(message string) {
-        <h1>An Error Occurred</h1>
-        <p>{ message }</p>
+	<h1>An Error Occurred</h1>
+	<p>{ message }</p>
 }
