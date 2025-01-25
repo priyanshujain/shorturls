@@ -19,8 +19,9 @@ type app struct {
 	dataDirectory string
 }
 
-type createQRCodeCommand struct {
-	LongURL string
+type qrCode struct {
+	ID      string
+	Content []byte
 }
 
 func (a *app) CreateQRCode(ctx context.Context, cmd createQRCodeCommand) (string, error) {
@@ -49,13 +50,12 @@ func (a *app) QRCode(ctx context.Context, q qrCodeQuery) (qrCode, error) {
 	return qr, nil
 }
 
-type qrCodeQuery struct {
-	QRID string
+type createQRCodeCommand struct {
+	LongURL string
 }
 
-type qrCode struct {
-	ID      string
-	Content []byte
+type qrCodeQuery struct {
+	QRID string
 }
 
 type httpHandler struct {

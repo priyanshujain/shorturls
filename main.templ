@@ -6,8 +6,8 @@ templ layout() {
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<meta name="color-scheme" content="light dark"/>
-			<title>Short Any URL simply</title>
-			<meta name="description" content="Simplest URL shortner"/>
+			<title>QR for any URL simply</title>
+			<meta name="description" content="Create QR"/>
 			<link
 				rel="stylesheet"
 				href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css"
@@ -28,7 +28,7 @@ templ Index() {
 		<form hx-post="/create" hx-swap="outerHTML" hx-params="*">
 			<div>
 				<input id="long_url" name="long_url" placeholder="Long URL" required/>
-				<button class="outline" type="submit">Create QR</button>
+				<button type="submit">Create QR</button>
 			</div>
 		</form>
 	}
